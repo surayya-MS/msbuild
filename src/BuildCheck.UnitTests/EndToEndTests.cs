@@ -40,7 +40,7 @@ public class EndToEndTests : IDisposable
 
         string output = RunnerUtilities.ExecBootstrapedMSBuild(
             $"{Path.GetFileName(projectFile.Path)} /m:1 -nr:False -restore" +
-            (analysisRequested ? " -analyze" : string.Empty), out bool success, false, _env.Output, timeoutMilliseconds: 120_000););
+            (analysisRequested ? " -analyze" : string.Empty), out bool success, false, _env.Output, timeoutMilliseconds: 120_000);
 
         _env.Output.WriteLine(output);
 
