@@ -40,7 +40,7 @@ public class EndToEndTests : IDisposable
 
         string output = RunnerUtilities.ExecBootstrapedMSBuild(
             $"{Path.GetFileName(projectFile.Path)} /m:1 -nr:False -restore" +
-            (analysisRequested ? " -analyze" : string.Empty), out bool success, false, _env.Output);
+            (analysisRequested ? " -analyze" : string.Empty), out bool success, false, _env.Output, timeoutMilliseconds: 120_000););
 
         _env.Output.WriteLine(output);
 
@@ -161,7 +161,6 @@ public class EndToEndTests : IDisposable
 
         string contents2 = $"""
             <Project Sdk="Microsoft.NET.Sdk">
-                               
                 <PropertyGroup>
                 <OutputType>Exe</OutputType>
                 <TargetFramework>net8.0</TargetFramework>
@@ -187,27 +186,20 @@ public class EndToEndTests : IDisposable
         projectFile = _env.CreateFile(workFolder, "FooBar.csproj", contents);
         TransientTestFile projectFile2 = _env.CreateFile(workFolder, "FooBar-Copy.csproj", contents2);
 
-        // var cache = new SimpleProjectRootElementCache();
-        // ProjectRootElement xml = ProjectRootElement.OpenProjectOrSolution(projectFile.Path, /*unused*/null, /*unused*/null, cache, false /*Not explicitly loaded - unused*/);
-
-        TransientTestFile config = _env.CreateFile(workFolder, "editorconfig.json",
-            /*lang=json,strict*/
+        TransientTestFile config = _env.CreateFile(workFolder, ".editorconfig",
             """
-            {
-                "BC0101": {
-                    "IsEnabled": true,
-                    "Severity": "Error"
-                },
-                "COND0543": {
-                    "IsEnabled": false,
-                    "Severity": "Error",
-                    "EvaluationAnalysisScope": "AnalyzedProjectOnly",
-                    "CustomSwitch": "QWERTY"
-                },
-                "BLA": {
-                    "IsEnabled": false
-                }
-            }
+            root=true
+
+            [*.csproj]
+            build_check.BC0101.IsEnabled=true
+            build_check.BC0101.Severity=warning
+
+            build_check.COND0543.IsEnabled=false
+            build_check.COND0543.Severity=Error
+            build_check.COND0543.EvaluationAnalysisScope=AnalyzedProjectOnly
+            build_check.COND0543.CustomSwitch=QWERTY
+
+            build_check.BLA.IsEnabled=false
             """);
 
         // OSX links /var into /private, which makes Path.GetTempPath() return "/var..." but Directory.GetCurrentDirectory return "/private/var...".
@@ -234,7 +226,7 @@ public class EndToEndTests : IDisposable
             AddCustomDataSourceToNugetConfig(analysisCandidatePath, candidatesNugetFullPaths);
 
             string projectAnalysisBuildLog = RunnerUtilities.ExecBootstrapedMSBuild(
-                $"{Path.Combine(analysisCandidatePath, $"{analysisCandidate}.csproj")} /m:1 -nr:False -restore /p:OutputPath={env.CreateFolder().Path} -analyze -verbosity:d",
+                $"{Path.Combine(analysisCandidatePath, $"{analysisCandidate}.csproj")} /m:1 -nr:False -restore /p:OutputPath={env.CreateFolder().Path} -analyze -verbosity:n",
                 out bool successBuild);
             successBuild.ShouldBeTrue();
 
