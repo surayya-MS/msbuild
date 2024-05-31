@@ -2952,34 +2952,6 @@ namespace Microsoft.Build.Execution
             });
         }
 
-        public void AttachBuildCheckForReplay(
-            IEnumerable<ILogger> loggers,
-            IEnumerable<ForwardingLoggerRecord> forwardingLoggers,
-            ISet<string> warningsAsErrors,
-            ISet<string> warningsNotAsErrors,
-            ISet<string> warningsAsMessages,
-            out ILogger buildCheckLogger)
-        {
-            _buildParameters = new BuildParameters
-            {
-                MaxNodeCount = 1,
-                IsBuildCheckEnabled = true
-            };
-
-            lock (_syncLock)
-            {
-                AttachDebugger();
-
-                CreateLoggingService(
-                loggers,
-                forwardingLoggers,
-                warningsAsErrors,
-                warningsNotAsErrors,
-                warningsAsMessages,
-                out buildCheckLogger);
-            }
-        }
-
         /// <summary>
         /// Creates a logging service around the specified set of loggers.
         /// </summary>

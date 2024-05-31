@@ -145,6 +145,7 @@ namespace Microsoft.Build.UnitTests.Shared
                 {
                     p.WaitForExit();
                 }
+                else if (!p.WaitForExit(3000_000))
                 else if (!p.WaitForExit(timeoutMilliseconds))
                 {
                     // Let's not create a unit test for which we need more than requested timeout to execute.

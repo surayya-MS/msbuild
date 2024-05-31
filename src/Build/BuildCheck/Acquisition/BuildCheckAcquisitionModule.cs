@@ -15,9 +15,10 @@ namespace Microsoft.Build.Experimental.BuildCheck.Acquisition;
 
 internal class BuildCheckAcquisitionModule : IBuildCheckAcquisitionModule
 {
-    private readonly ILoggingService _loggingService;
+    private readonly IBuildCheckEventContextDispatcher _buildContextDispatcher;
 
-    internal BuildCheckAcquisitionModule(ILoggingService loggingService) => _loggingService = loggingService;
+    internal BuildCheckAcquisitionModule(IBuildCheckEventContextDispatcher buildContextDispatcher)
+        => _buildContextDispatcher = buildContextDispatcher;
 
 #if FEATURE_ASSEMBLYLOADCONTEXT
     /// <summary>
@@ -62,13 +63,13 @@ internal class BuildCheckAcquisitionModule : IBuildCheckAcquisitionModule
             {
                 foreach (Exception? loaderException in ex.LoaderExceptions)
                 {
-                    _loggingService.LogComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerFailedRuleLoading", loaderException?.Message);
+                    _buildContextDispatcher.DispatchAsComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerFailedRuleLoading", loaderException?.Message);
                 }
             }
         }
         catch (Exception ex)
         {
-            _loggingService.LogComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerFailedRuleLoading", ex?.Message);
+            _buildContextDispatcher.DispatchAsComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerFailedRuleLoading", ex?.Message);
         }
 
         return analyzersFactories;
