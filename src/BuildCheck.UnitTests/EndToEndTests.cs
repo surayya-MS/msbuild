@@ -110,13 +110,11 @@ public class EndToEndTests : IDisposable
 
         success.ShouldBeTrue();
 
-        // string output = RunnerUtilities.ExecBootstrapedMSBuild(
-        //  $"{logFile} -flp:logfile={Path.Combine(projectDirectory!, "logFile.log")};verbosity=diagnostic {(analysisRequested ? "-analyze" : string.Empty)}",
-        //  out success, false, _env.Output);
+        // _env.SetEnvironmentVariable("MSBUILDDEBUGONSTART", "1");
 
         string output = RunnerUtilities.ExecBootstrapedMSBuild(
-          $"{logFile} {(analysisRequested ? "-analyze" : string.Empty)}",
-          out success, false, _env.Output, timeoutMilliseconds: 130_000);
+         $"{logFile} -flp:logfile={Path.Combine(projectDirectory!, "logFile.log")};verbosity=diagnostic {(analysisRequested ? "-analyze" : string.Empty)}",
+         out success, false, _env.Output, timeoutMilliseconds: 130_000);
 
         _env.Output.WriteLine(output);
 
