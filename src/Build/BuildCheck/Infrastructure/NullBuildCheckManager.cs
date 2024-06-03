@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Build.BackEnd.Logging;
 using Microsoft.Build.Experimental.BuildCheck.Acquisition;
+using Microsoft.Build.Experimental.BuildCheck.Logging;
 using Microsoft.Build.Experimental.BuildCheck;
 using Microsoft.Build.Framework;
 
@@ -16,7 +17,9 @@ internal class NullBuildCheckManager : IBuildCheckManager
     {
     }
 
-    public void ProcessEvaluationFinishedEventArgs(ProjectEvaluationFinishedEventArgs projectEvaluationFinishedEventArgs)
+    public void ProcessEvaluationFinishedEventArgs(
+        AnalyzerLoggingContext buildAnalysisContext,
+        ProjectEvaluationFinishedEventArgs projectEvaluationFinishedEventArgs)
     {
     }
 
@@ -24,15 +27,18 @@ internal class NullBuildCheckManager : IBuildCheckManager
     {
     }
 
-    public void ProcessTaskStartedEventArgs(TaskStartedEventArgs taskStartedEventArgs)
+    public void ProcessTaskStartedEventArgs(AnalyzerLoggingContext buildAnalysisContext,
+        TaskStartedEventArgs taskStartedEventArgs)
     {
     }
 
-    public void ProcessTaskFinishedEventArgs(TaskFinishedEventArgs taskFinishedEventArgs)
+    public void ProcessTaskFinishedEventArgs(AnalyzerLoggingContext buildAnalysisContext,
+        TaskFinishedEventArgs taskFinishedEventArgs)
     {
     }
 
-    public void ProcessTaskParameterEventArgs(TaskParameterEventArgs taskParameterEventArgs)
+    public void ProcessTaskParameterEventArgs(AnalyzerLoggingContext buildAnalysisContext,
+        TaskParameterEventArgs taskParameterEventArgs)
     {
     }
 
@@ -71,34 +77,11 @@ internal class NullBuildCheckManager : IBuildCheckManager
     public Dictionary<string, TimeSpan> CreateAnalyzerTracingStats() => new Dictionary<string, TimeSpan>();
 
     public void StartTaskInvocation(BuildCheckDataSource buildCheckDataSource, TaskStartedEventArgs eventArgs)
-    {
-    }
+    { }
 
     public void EndTaskInvocation(BuildCheckDataSource buildCheckDataSource, TaskFinishedEventArgs eventArgs)
-    {
-    }
+    { }
 
     public void ProcessTaskParameter(BuildCheckDataSource buildCheckDataSource, TaskParameterEventArgs eventArg)
-    {
-    }
-
-    public void ProcessProjectEvaluationStartedEventArgs(ProjectEvaluationStartedEventArgs eventArgs)
-    {
-    }
-
-    public void ProcessProjectEvaluationFinishedEventArgs(ProjectEvaluationFinishedEventArgs eventArgs)
-    {
-    }
-
-    public void ProcessBuildCheckTracingEventArgs(BuildCheckTracingEventArgs eventArgs)
-    {
-    }
-
-    public void ProcessBuildFinishedEventArgs(BuildFinishedEventArgs eventArgs)
-    {
-    }
-
-    public void ProcessAnalyzerAcquisition(BuildCheckAcquisitionEventArgs eventArgs)
-    {
-    }
+    { }
 }

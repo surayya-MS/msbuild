@@ -8,10 +8,10 @@ using System.Linq;
 using System.Threading;
 using Microsoft.Build.BackEnd;
 using Microsoft.Build.BackEnd.Logging;
-using Microsoft.Build.Experimental.BuildCheck;
 using Microsoft.Build.Experimental.BuildCheck.Acquisition;
 using Microsoft.Build.Experimental.BuildCheck.Analyzers;
-using Microsoft.Build.Experimental.BuildCheck.Utilities;
+using Microsoft.Build.Experimental.BuildCheck.Logging;
+using Microsoft.Build.Experimental.BuildCheck;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Shared;
 
@@ -66,20 +66,19 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
         private readonly TracingReporter _tracingReporter = new TracingReporter();
         private readonly ConfigurationProvider _configurationProvider = new ConfigurationProvider();
         private readonly BuildCheckCentralContext _buildCheckCentralContext;
-        private readonly IBuildCheckEventContextDispatcher _buildCheckContextDispatcher;
+        private readonly IBuildCheckEventContextDispatcher _buildContextDispatcher;
         private readonly List<BuildAnalyzerFactoryContext> _analyzersRegistry;
         private readonly bool[] _enabledDataSources = new bool[(int)BuildCheckDataSource.ValuesCount];
         private readonly BuildEventsProcessor _buildEventsProcessor;
         private readonly IBuildCheckAcquisitionModule _acquisitionModule;
-        private readonly Dictionary<string, TimeSpan> _stats = new Dictionary<string, TimeSpan>();
 
         internal BuildCheckManager(IBuildCheckEventContextDispatcher buildContextDispatcher)
         {
             _analyzersRegistry = new List<BuildAnalyzerFactoryContext>();
             _acquisitionModule = new BuildCheckAcquisitionModule(buildContextDispatcher);
-            _buildCheckContextDispatcher = buildContextDispatcher;
+            _buildContextDispatcher = buildContextDispatcher;
             _buildCheckCentralContext = new(_configurationProvider);
-            _buildEventsProcessor = new(_buildCheckCentralContext, _buildCheckContextDispatcher);
+            _buildEventsProcessor = new(_buildCheckCentralContext);
         }
 
         private bool IsInProcNode => _enabledDataSources[(int)BuildCheckDataSource.EventArgs] &&
@@ -102,11 +101,8 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
             _tracingReporter.AddSetDataSourceStats(stopwatch.Elapsed);
         }
 
-        public void ProcessAnalyzerAcquisition(BuildCheckAcquisitionEventArgs buildCheckAcquisitionEventArgs)
+        public void ProcessAnalyzerAcquisition(AnalyzerAcquisitionData acquisitionData, BuildEventContext buildEventContext)
         {
-            var acquisitionData = buildCheckAcquisitionEventArgs.ToAnalyzerAcquisitionData();
-            var buildEventContext = GetBuildEventContext(buildCheckAcquisitionEventArgs);
-
             Stopwatch stopwatch = Stopwatch.StartNew();
             if (IsInProcNode)
             {
@@ -117,7 +113,7 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
                 }
                 else
                 {
-                    _buildCheckContextDispatcher.DispatchAsComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerFailedAcquisition", acquisitionData.AssemblyPath);
+                    _buildContextDispatcher.DispatchAsComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerFailedAcquisition", acquisitionData.AssemblyPath);
                 }
             }
             else
@@ -125,7 +121,7 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
                 BuildCheckAcquisitionEventArgs eventArgs = acquisitionData.ToBuildEventArgs();
                 eventArgs.BuildEventContext = buildEventContext;
 
-                _buildCheckContextDispatcher.DispatchAsBuildEvent(eventArgs);
+                _buildContextDispatcher.DispatchAsBuildEvent(eventArgs);
             }
             stopwatch.Stop();
             _tracingReporter.AddAcquisitionStats(stopwatch.Elapsed);
@@ -202,7 +198,7 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
                         factory,
                         instance.SupportedRules.Select(r => r.Id).ToArray(),
                         instance.SupportedRules.Any(r => r.DefaultConfiguration.IsEnabled == true)));
-                    _buildCheckContextDispatcher.DispatchAsComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerSuccessfulAcquisition", instance.FriendlyName);
+                    _buildContextDispatcher.DispatchAsComment(buildEventContext, MessageImportance.Normal, "CustomAnalyzerSuccessfulAcquisition", instance.FriendlyName);
                 }
             }
         }
@@ -301,7 +297,7 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
                 }
                 catch (BuildCheckConfigurationException e)
                 {
-                    _buildCheckContextDispatcher.DispatchAsErrorFromText(buildEventContext, null, null, null,
+                    _buildContextDispatcher.DispatchAsErrorFromText(buildEventContext, null, null, null,
                         new BuildEventFileInfo(projectFullPath),
                         e.Message);
                     analyzersToRemove.Add(analyzerFactoryContext);
@@ -311,7 +307,7 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
             analyzersToRemove.ForEach(c =>
             {
                 _analyzersRegistry.Remove(c);
-                _buildCheckContextDispatcher.DispatchAsCommentFromText(buildEventContext, MessageImportance.High, $"Dismounting analyzer '{c.FriendlyName}'");
+                _buildContextDispatcher.DispatchAsCommentFromText(buildEventContext, MessageImportance.High, $"Dismounting analyzer '{c.FriendlyName}'");
             });
             foreach (var analyzerToRemove in analyzersToRemove.Select(a => a.MaterializedAnalyzer).Where(a => a != null))
             {
@@ -324,97 +320,31 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
             _tracingReporter.AddNewProjectStats(stopwatch.Elapsed);
         }
 
-        public void ProcessTaskStartedEventArgs(TaskStartedEventArgs taskStartedEventArgs)
+        public void ProcessEvaluationFinishedEventArgs(
+            AnalyzerLoggingContext buildAnalysisContext,
+            ProjectEvaluationFinishedEventArgs evaluationFinishedEventArgs)
             => _buildEventsProcessor
-                .ProcessTaskStartedEventArgs(taskStartedEventArgs);
+                .ProcessEvaluationFinishedEventArgs(buildAnalysisContext, evaluationFinishedEventArgs);
 
-        public void ProcessTaskFinishedEventArgs(TaskFinishedEventArgs taskFinishedEventArgs)
+        public void ProcessTaskStartedEventArgs(
+            AnalyzerLoggingContext buildAnalysisContext,
+            TaskStartedEventArgs taskStartedEventArgs)
             => _buildEventsProcessor
-                .ProcessTaskFinishedEventArgs(taskFinishedEventArgs);
+                .ProcessTaskStartedEventArgs(buildAnalysisContext, taskStartedEventArgs);
 
-        public void ProcessTaskParameterEventArgs(TaskParameterEventArgs taskParameterEventArgs)
+        public void ProcessTaskFinishedEventArgs(
+            AnalyzerLoggingContext buildAnalysisContext,
+            TaskFinishedEventArgs taskFinishedEventArgs)
             => _buildEventsProcessor
-                .ProcessTaskParameterEventArgs(taskParameterEventArgs);
+                .ProcessTaskFinishedEventArgs(buildAnalysisContext, taskFinishedEventArgs);
 
-        public void ProcessProjectEvaluationFinishedEventArgs(ProjectEvaluationFinishedEventArgs eventArgs)
-        {
-            if (!IsMetaProjFile(eventArgs.ProjectFile))
-            {
-                _buildEventsProcessor.ProcessEvaluationFinishedEventArgs(eventArgs);
+        public void ProcessTaskParameterEventArgs(
+            AnalyzerLoggingContext buildAnalysisContext,
+            TaskParameterEventArgs taskParameterEventArgs)
+            => _buildEventsProcessor
+                .ProcessTaskParameterEventArgs(buildAnalysisContext, taskParameterEventArgs);
 
-                EndProjectEvaluation(BuildCheckDataSource.EventArgs, eventArgs.BuildEventContext!);
-            }
-        }
-
-        public void ProcessProjectEvaluationStartedEventArgs(ProjectEvaluationStartedEventArgs eventArgs)
-        {
-            if (!IsMetaProjFile(eventArgs.ProjectFile))
-            {
-                StartProjectEvaluation(BuildCheckDataSource.EventArgs, eventArgs.BuildEventContext!, eventArgs.ProjectFile!);
-            }
-        }
-
-        private bool IsMetaProjFile(string? projectFile) => !string.IsNullOrEmpty(projectFile) && projectFile!.EndsWith(".metaproj", StringComparison.OrdinalIgnoreCase);
-
-        public void ProcessBuildFinishedEventArgs(BuildFinishedEventArgs buildFinishedEventArgs)
-        {
-            var buildEventContext = GetBuildEventContext(buildFinishedEventArgs);
-
-            _stats.Merge(CreateAnalyzerTracingStats(), (span1, span2) => span1 + span2);
-            LogAnalyzerStats(buildEventContext);
-        }
-
-        private void LogAnalyzerStats(BuildEventContext buildEventContext)
-        {
-            Dictionary<string, TimeSpan> infraStats = new Dictionary<string, TimeSpan>();
-            Dictionary<string, TimeSpan> analyzerStats = new Dictionary<string, TimeSpan>();
-
-            foreach (var stat in _stats)
-            {
-                if (stat.Key.StartsWith(BuildCheckConstants.infraStatPrefix))
-                {
-                    string newKey = stat.Key.Substring(BuildCheckConstants.infraStatPrefix.Length);
-                    infraStats[newKey] = stat.Value;
-                }
-                else
-                {
-                    analyzerStats[stat.Key] = stat.Value;
-                }
-            }
-
-            BuildCheckTracingEventArgs statEvent = new BuildCheckTracingEventArgs(_stats, true)
-            { BuildEventContext = buildEventContext };
-
-            _buildCheckContextDispatcher.DispatchAsBuildEvent(statEvent);
-
-            _buildCheckContextDispatcher.DispatchAsCommentFromText(buildEventContext, MessageImportance.Low, $"BuildCheck run times{Environment.NewLine}");
-            string infraData = BuildCsvString("Infrastructure run times", infraStats);
-            _buildCheckContextDispatcher.DispatchAsCommentFromText(buildEventContext, MessageImportance.Low, infraData);
-            string analyzerData = BuildCsvString("Analyzer run times", analyzerStats);
-            _buildCheckContextDispatcher.DispatchAsCommentFromText(buildEventContext, MessageImportance.Low, analyzerData);
-        }
-
-        public void ProcessBuildCheckTracingEventArgs(BuildCheckTracingEventArgs eventArgs)
-        {
-            if (!eventArgs.IsAggregatedGlobalReport)
-            {
-                _stats.Merge(eventArgs.TracingData, (span1, span2) => span1 + span2);
-            }
-        }
-
-        private BuildEventContext GetBuildEventContext(BuildEventArgs e) => e.BuildEventContext
-            ?? new BuildEventContext(
-                    BuildEventContext.InvalidNodeId,
-                    BuildEventContext.InvalidTargetId,
-                    BuildEventContext.InvalidProjectContextId,
-                    BuildEventContext.InvalidTaskId);
-
-        private string BuildCsvString(string title, Dictionary<string, TimeSpan> rowData)
-        {
-            return title + Environment.NewLine + String.Join(Environment.NewLine, rowData.Select(a => $"{a.Key},{a.Value}")) + Environment.NewLine;
-        }
-
-        private Dictionary<string, TimeSpan> CreateAnalyzerTracingStats()
+        public Dictionary<string, TimeSpan> CreateAnalyzerTracingStats()
         {
             foreach (BuildAnalyzerFactoryContext analyzerFactoryContext in _analyzersRegistry)
             {

@@ -22,6 +22,7 @@ using Microsoft.Build.BackEnd;
 using Microsoft.Build.BackEnd.Logging;
 using Microsoft.Build.BackEnd.SdkResolution;
 using Microsoft.Build.Experimental.BuildCheck.Infrastructure;
+using Microsoft.Build.Experimental.BuildCheck.Logging;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Eventing;
 using Microsoft.Build.Exceptions;
@@ -3000,7 +3001,8 @@ namespace Microsoft.Build.Execution
                     verbosity: LoggerVerbosity.Quiet);
 
                 buildCheckLogger =
-                    new BuildCheckConnectorLogger(buildCheckManagerProvider.Instance);
+                    new BuildCheckConnectorLogger(new AnalyzerLoggingContextFactory(loggingService),
+                        buildCheckManagerProvider.Instance);
 
                 ForwardingLoggerRecord[] forwardingLogger = { new ForwardingLoggerRecord(buildCheckLogger, forwardingLoggerDescription) };
 
