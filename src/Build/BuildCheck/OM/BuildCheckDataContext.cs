@@ -32,19 +32,24 @@ public abstract class AnalysisData(string projectFilePath)
 public class BuildCheckDataContext<T> where T : AnalysisData
 {
     private readonly BuildAnalyzerWrapper _analyzerWrapper;
-    private readonly LoggingContext _loggingContext;
+    private readonly BuildEventContext _buildEventContext;
+    private readonly IBuildCheckEventContextDispatcher _buildCheckEventContextDispatcher;
     private readonly BuildAnalyzerConfigurationInternal[] _configPerRule;
-    private readonly Action<BuildAnalyzerWrapper, LoggingContext, BuildAnalyzerConfigurationInternal[], BuildCheckResult> _resultHandler;
+    private readonly Action<BuildAnalyzerWrapper, BuildEventContext, IBuildCheckEventContextDispatcher,
+        BuildAnalyzerConfigurationInternal[], BuildCheckResult> _resultHandler;
 
     internal BuildCheckDataContext(
         BuildAnalyzerWrapper analyzerWrapper,
-        LoggingContext loggingContext,
+        BuildEventContext buildEventContext,
+        IBuildCheckEventContextDispatcher buildCheckEventContextDispatcher,
         BuildAnalyzerConfigurationInternal[] configPerRule,
-        Action<BuildAnalyzerWrapper, LoggingContext, BuildAnalyzerConfigurationInternal[], BuildCheckResult> resultHandler,
+        Action<BuildAnalyzerWrapper, BuildEventContext, IBuildCheckEventContextDispatcher,
+            BuildAnalyzerConfigurationInternal[], BuildCheckResult> resultHandler,
         T data)
     {
         _analyzerWrapper = analyzerWrapper;
-        _loggingContext = loggingContext;
+        _buildEventContext = buildEventContext;
+        _buildCheckEventContextDispatcher = buildCheckEventContextDispatcher;
         _configPerRule = configPerRule;
         _resultHandler = resultHandler;
         Data = data;
@@ -55,7 +60,7 @@ public class BuildCheckDataContext<T> where T : AnalysisData
     /// </summary>
     /// <param name="result"></param>
     public void ReportResult(BuildCheckResult result)
-        => _resultHandler(_analyzerWrapper, _loggingContext, _configPerRule, result);
+        => _resultHandler(_analyzerWrapper, _buildEventContext, _buildCheckEventContextDispatcher, _configPerRule, result);
 
     /// <summary>
     /// Data to be analyzed.
