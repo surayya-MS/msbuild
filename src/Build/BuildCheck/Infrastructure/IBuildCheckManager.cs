@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Build.BackEnd.Logging;
 using Microsoft.Build.Experimental.BuildCheck.Acquisition;
-using Microsoft.Build.Experimental.BuildCheck.Logging;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Experimental.BuildCheck;
@@ -36,27 +35,23 @@ internal enum BuildCheckDataSource
 /// </summary>
 internal interface IBuildCheckManager
 {
-    void ProcessEvaluationFinishedEventArgs(
-        AnalyzerLoggingContext buildAnalysisContext,
-        ProjectEvaluationFinishedEventArgs projectEvaluationFinishedEventArgs);
+    void ProcessTaskStartedEventArgs(TaskStartedEventArgs taskStartedEventArgs);
 
-    void ProcessTaskStartedEventArgs(
-        AnalyzerLoggingContext buildAnalysisContext,
-        TaskStartedEventArgs taskStartedEventArgs);
+    void ProcessTaskFinishedEventArgs(TaskFinishedEventArgs taskFinishedEventArgs);
 
-    void ProcessTaskFinishedEventArgs(
-        AnalyzerLoggingContext buildAnalysisContext,
-        TaskFinishedEventArgs taskFinishedEventArgs);
+    void ProcessTaskParameterEventArgs(TaskParameterEventArgs taskParameterEventArgs);
 
-    void ProcessTaskParameterEventArgs(
-        AnalyzerLoggingContext buildAnalysisContext,
-        TaskParameterEventArgs taskParameterEventArgs);
+    void ProcessProjectEvaluationStartedEventArgs(ProjectEvaluationStartedEventArgs eventArgs);
+
+    void ProcessProjectEvaluationFinishedEventArgs(ProjectEvaluationFinishedEventArgs eventArgs);
+
+    void ProcessBuildCheckTracingEventArgs(BuildCheckTracingEventArgs eventArgs);
+
+    void ProcessBuildFinishedEventArgs(BuildFinishedEventArgs eventArgs);
 
     void SetDataSource(BuildCheckDataSource buildCheckDataSource);
 
-    void ProcessAnalyzerAcquisition(AnalyzerAcquisitionData acquisitionData, BuildEventContext buildEventContext);
-
-    Dictionary<string, TimeSpan> CreateAnalyzerTracingStats();
+    void ProcessAnalyzerAcquisition(BuildCheckAcquisitionEventArgs eventArgs);
 
     void FinalizeProcessing(LoggingContext loggingContext);
 

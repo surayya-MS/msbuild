@@ -34,9 +34,9 @@ internal class LoggingDispatcher : IBuildCheckEventContextDispatcher
 
     public void DispatchAsErrorFromText(
         BuildEventContext buildEventContext,
-        string subcategoryResourceName,
-        string errorCode,
-        string helpKeyword,
+        string? subcategoryResourceName,
+        string? errorCode,
+        string? helpKeyword,
         BuildEventFileInfo file,
         string message)
         => _loggingService.LogErrorFromText(buildEventContext, subcategoryResourceName, errorCode, helpKeyword, file, message);
