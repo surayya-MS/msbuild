@@ -172,6 +172,7 @@
     <Compile Include="BuildCheck\Infrastructure\EditorConfig\EditorConfigGlobsMatcher.cs" />
     <Compile Include="BuildCheck\Infrastructure\EditorConfig\EditorConfigParser.cs" />
     <Compile Include="BuildCheck\Infrastructure\BuildCheckConfigurationErrorScope.cs" />
+    <Compile Include="BuildCheck\Logging\AnalyzerLoggingContext.cs" />
     <Compile Include="BuildCheck\OM\BuildCheckDataContext.cs" />
     <Compile Include="BuildCheck\API\BuildAnalyzer.cs" />
     <Compile Include="BuildCheck\API\BuildAnalyzerConfiguration.cs" />

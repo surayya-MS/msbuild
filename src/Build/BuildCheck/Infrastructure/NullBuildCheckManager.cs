@@ -16,10 +16,6 @@ internal class NullBuildCheckManager : IBuildCheckManager
     {
     }
 
-    public void ProcessEvaluationFinishedEventArgs(ProjectEvaluationFinishedEventArgs projectEvaluationFinishedEventArgs)
-    {
-    }
-
     public void SetDataSource(BuildCheckDataSource buildCheckDataSource)
     {
     }
@@ -60,28 +56,6 @@ internal class NullBuildCheckManager : IBuildCheckManager
     {
     }
 
-    public void YieldProject(BuildCheckDataSource buildCheckDataSource, BuildEventContext buildEventContext)
-    {
-    }
-
-    public void ResumeProject(BuildCheckDataSource buildCheckDataSource, BuildEventContext buildEventContext)
-    {
-    }
-
-    public Dictionary<string, TimeSpan> CreateAnalyzerTracingStats() => new Dictionary<string, TimeSpan>();
-
-    public void StartTaskInvocation(BuildCheckDataSource buildCheckDataSource, TaskStartedEventArgs eventArgs)
-    {
-    }
-
-    public void EndTaskInvocation(BuildCheckDataSource buildCheckDataSource, TaskFinishedEventArgs eventArgs)
-    {
-    }
-
-    public void ProcessTaskParameter(BuildCheckDataSource buildCheckDataSource, TaskParameterEventArgs eventArg)
-    {
-    }
-
     public void ProcessProjectEvaluationStartedEventArgs(ProjectEvaluationStartedEventArgs eventArgs)
     {
     }
@@ -95,10 +69,6 @@ internal class NullBuildCheckManager : IBuildCheckManager
     }
 
     public void ProcessBuildFinishedEventArgs(BuildFinishedEventArgs eventArgs)
-    {
-    }
-
-    public void ProcessAnalyzerAcquisition(BuildCheckAcquisitionEventArgs eventArgs)
     {
     }
 }

@@ -51,7 +51,7 @@ internal interface IBuildCheckManager
 
     void SetDataSource(BuildCheckDataSource buildCheckDataSource);
 
-    void ProcessAnalyzerAcquisition(BuildCheckAcquisitionEventArgs eventArgs);
+    void ProcessAnalyzerAcquisition(AnalyzerAcquisitionData acquisitionData, BuildEventContext buildEventContext);
 
     void FinalizeProcessing(LoggingContext loggingContext);
 

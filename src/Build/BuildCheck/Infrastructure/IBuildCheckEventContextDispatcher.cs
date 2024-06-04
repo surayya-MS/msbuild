@@ -13,7 +13,7 @@ namespace Microsoft.Build.Experimental.BuildCheck.Infrastructure;
 
 internal interface IBuildCheckEventContextDispatcher
 {
-    void DispatchAsComment(BuildEventContext buildEventContext, MessageImportance importance, string messageResourceName, params object[] messageArgs);
+    void DispatchAsComment(BuildEventContext buildEventContext, MessageImportance importance, string messageResourceName, params object?[] messageArgs);
 
     void DispatchAsBuildEvent(BuildEventArgs buildEvent);
 

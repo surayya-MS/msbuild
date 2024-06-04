@@ -26,7 +26,7 @@ internal class LoggingDispatcher : IBuildCheckEventContextDispatcher
         BuildEventContext buildEventContext,
         MessageImportance importance,
         string messageResourceName,
-        params object[] messageArgs)
+        params object?[] messageArgs)
         => _loggingService.LogComment(buildEventContext, importance, messageResourceName, messageArgs);
 
     public void DispatchAsCommentFromText(BuildEventContext buildEventContext, MessageImportance importance, string message)

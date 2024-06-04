@@ -102,11 +102,8 @@ internal sealed class BuildCheckManagerProvider : IBuildCheckManagerProvider
             _tracingReporter.AddSetDataSourceStats(stopwatch.Elapsed);
         }
 
-        public void ProcessAnalyzerAcquisition(BuildCheckAcquisitionEventArgs buildCheckAcquisitionEventArgs)
+        public void ProcessAnalyzerAcquisition(AnalyzerAcquisitionData acquisitionData, BuildEventContext buildEventContext)
         {
-            var acquisitionData = buildCheckAcquisitionEventArgs.ToAnalyzerAcquisitionData();
-            var buildEventContext = GetBuildEventContext(buildCheckAcquisitionEventArgs);
-
             Stopwatch stopwatch = Stopwatch.StartNew();
             if (IsInProcNode)
             {
