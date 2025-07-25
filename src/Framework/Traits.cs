@@ -132,7 +132,8 @@ namespace Microsoft.Build.Framework
         /// </summary>
         public const string UseMSBuildServerEnvVarName = "MSBUILDUSESERVER";
 
-        public readonly bool DebugEngine = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBuildDebugEngine"));
+        public readonly bool DebugEngine = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBuildDebugEngine")) ||
+                                            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBUILDDEBUGENGINE"));
         public readonly bool DebugScheduler;
         public readonly bool DebugNodeCommunication;
         public readonly bool DebugUnitTests = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MSBuildDebugUnitTests"));

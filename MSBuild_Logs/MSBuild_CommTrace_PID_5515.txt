@@ -1,0 +1,41 @@
+.NET TP Worker (TID 16) 638890395211491877 +    0.1305ms: Starting to acquire 3 new or existing node(s) to establish nodes from ID 2 to 4...
+.NET TP Worker (TID 16) 638890395211521989 +    3.0112ms: Building handshake for node type X64, NodeReuse, (version 1): options 16777228.
+.NET TP Worker (TID 16) 638890395211522655 +    0.0666ms: Handshake salt is 
+.NET TP Worker (TID 16) 638890395211522927 +    0.0272ms: Tools directory root is /home/runner/work/msbuild/msbuild/.dotnet/sdk/10.0.100-preview.6.25315.102
+.NET TP Worker (TID 16) 638890395211621452 +    9.8525ms: Attempting to connect to 5 existing processes 'dotnet'...
+.NET TP Worker (TID 6) 638890395211623908 +    0.2456ms: Trying to connect to existing process dotnet with id 4264 to establish node 2...
+.NET TP Worker (TID 4) 638890395211624396 +    0.0488ms: Trying to connect to existing process dotnet with id 4266 to establish node 4...
+.NET TP Worker (TID 6) 638890395211629942 +    0.5546ms: Attempting connect to PID 4264 with pipe /tmp/MSBuild4264 with timeout 0 ms
+.NET TP Worker (TID 4) 638890395211648491 +    1.8549ms: Attempting connect to PID 4266 with pipe /tmp/MSBuild4266 with timeout 0 ms
+.NET TP Worker (TID 10) 638890395211649213 +    0.0722ms: Trying to connect to existing process dotnet with id 4265 to establish node 3...
+.NET TP Worker (TID 10) 638890395211649633 +     0.042ms: Attempting connect to PID 4265 with pipe /tmp/MSBuild4265 with timeout 0 ms
+.NET TP Worker (TID 10) 638890395211652073 +     0.244ms: Writing handshake part 0 (16777228) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 4) 638890395211652734 +    0.0661ms: Writing handshake part 0 (16777228) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 10) 638890395211662961 +    1.0227ms: Writing handshake part 1 (-63219896) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 4) 638890395211663649 +    0.0688ms: Writing handshake part 1 (-63219896) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 4) 638890395211664179 +     0.053ms: Writing handshake part 2 (17) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 4) 638890395211664491 +    0.0312ms: Writing handshake part 3 (15) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 4) 638890395211664755 +    0.0264ms: Writing handshake part 4 (0) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 4) 638890395211665009 +    0.0254ms: Writing handshake part 5 (31602) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 4) 638890395211665297 +    0.0288ms: Writing handshake part 6 (3997) to pipe /tmp/MSBuild4266
+.NET TP Worker (TID 4) 638890395211665579 +    0.0282ms: Reading handshake from pipe /tmp/MSBuild4266
+.NET TP Worker (TID 6) 638890395211670791 +    0.5212ms: Writing handshake part 0 (16777228) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211671478 +    0.0687ms: Writing handshake part 1 (-63219896) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211672048 +     0.057ms: Writing handshake part 2 (17) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211672464 +    0.0416ms: Writing handshake part 3 (15) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211672832 +    0.0368ms: Writing handshake part 4 (0) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211673326 +    0.0494ms: Writing handshake part 5 (31602) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211673857 +    0.0531ms: Writing handshake part 6 (3997) to pipe /tmp/MSBuild4264
+.NET TP Worker (TID 6) 638890395211674356 +    0.0499ms: Reading handshake from pipe /tmp/MSBuild4264
+.NET TP Worker (TID 4) 638890395211675146 +     0.079ms: Successfully connected to pipe /tmp/MSBuild4266...!
+.NET TP Worker (TID 4) 638890395211675610 +    0.0464ms: Successfully connected to existed node 4 which is PID 4266
+.NET TP Worker (TID 10) 638890395211696094 +    2.0484ms: Writing handshake part 2 (17) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 10) 638890395211696661 +    0.0567ms: Writing handshake part 3 (15) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 10) 638890395211697321 +     0.066ms: Writing handshake part 4 (0) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 10) 638890395211697839 +    0.0518ms: Writing handshake part 5 (31602) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 10) 638890395211698353 +    0.0514ms: Writing handshake part 6 (3997) to pipe /tmp/MSBuild4265
+.NET TP Worker (TID 10) 638890395211698791 +    0.0438ms: Reading handshake from pipe /tmp/MSBuild4265
+.NET TP Worker (TID 6) 638890395211723092 +    2.4301ms: Successfully connected to pipe /tmp/MSBuild4264...!
+.NET TP Worker (TID 6) 638890395211723609 +    0.0517ms: Successfully connected to existed node 2 which is PID 4264
+.NET TP Worker (TID 10) 638890395211726662 +    0.3053ms: Successfully connected to pipe /tmp/MSBuild4265...!
+.NET TP Worker (TID 10) 638890395211727023 +    0.0361ms: Successfully connected to existed node 3 which is PID 4265
