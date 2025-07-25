@@ -692,7 +692,7 @@ namespace Microsoft.Build.Execution
 
                 var logger = new BinaryLogger { Parameters = binlogPath };
 
-                return (loggers ?? []).Concat([logger]);
+                return (loggers ?? [logger]);
             }
 
             void InitializeCaches()
