@@ -43,6 +43,7 @@ artifacts/
 *.log
 *.binlog
 *.ProjectImports.zip
+MSBuild_Logs/
 *.vspscc
 *.vssscc
 .builds
