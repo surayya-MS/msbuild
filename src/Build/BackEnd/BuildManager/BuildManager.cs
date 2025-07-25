@@ -823,10 +823,10 @@ namespace Microsoft.Build.Execution
             ILoggingService loggingService = ((IBuildComponentHost)this).LoggingService;
             loggingService.LogBuildCanceled();
 
-            var parentThreadCulture = _buildParameters != null
+            CultureInfo parentThreadCulture = _buildParameters != null
                 ? _buildParameters.Culture
                 : CultureInfo.CurrentCulture;
-            var parentThreadUICulture = _buildParameters != null
+            CultureInfo parentThreadUICulture = _buildParameters != null
                 ? _buildParameters.UICulture
                 : CultureInfo.CurrentUICulture;
 
