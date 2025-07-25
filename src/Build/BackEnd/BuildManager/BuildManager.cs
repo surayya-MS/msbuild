@@ -79,7 +79,7 @@ namespace Microsoft.Build.Execution
         /// These must be unique across build managers, as they
         /// are used as part of cache file names, for example.
         /// </summary>
-        private static int s_nextBuildRequestConfigurationId;
+        private static int upcomingBuildRequestConfigId;
 
         /// <summary>
         /// The cache for build request configurations.
@@ -2262,14 +2262,14 @@ namespace Microsoft.Build.Execution
         /// </summary>
         private int GetNewConfigurationId()
         {
-            int newId = Interlocked.Increment(ref s_nextBuildRequestConfigurationId);
+            int newId = Interlocked.Increment(ref upcomingBuildRequestConfigId);
 
             if (_scheduler != null)
             {
                 // Minimum configuration id is always the lowest valid configuration id available, so increment after returning.
                 while (newId <= _scheduler.MinimumAssignableConfigurationId) // Currently this minimum is one
                 {
-                    newId = Interlocked.Increment(ref s_nextBuildRequestConfigurationId);
+                    newId = Interlocked.Increment(ref upcomingBuildRequestConfigId);
                 }
             }
 
