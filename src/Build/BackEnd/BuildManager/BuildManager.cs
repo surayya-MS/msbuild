@@ -751,7 +751,7 @@ namespace Microsoft.Build.Execution
                         ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword(
                             "OpenTelemetryLoadFailed",
                             failureMessage),
-                    MessageImportance.Low));
+                        MessageImportance.Low));
 
                 // clean up the message from OpenTelemetryManager to avoid double logging it
                 OpenTelemetryManager.Instance.LoadFailureExceptionMessage = null;
